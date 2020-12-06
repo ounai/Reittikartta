@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const routeModule = require('../modules/routes');
+const routeService = require('../services/routes');
 
 /* GET /api/getRoutes */
 router.get('/getRoutes', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(routeModule.getRoutes()));
-  console.log(routeModule.getRoutes());
 });
 
 module.exports = router;

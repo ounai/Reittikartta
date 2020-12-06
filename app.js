@@ -4,7 +4,7 @@ let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 
-let routeModule = require('./modules/routes');
+let routeService = require('./services/routes');
 
 let app = express();
 
@@ -40,7 +40,7 @@ app.use(function(err, req, res, next) {
 // Update routes, set up automatic updating
 const routeUpdateInterval = 24 * 60 * 60 * 1000; // Every 24 hours
 
-routeModule.updateRoutes();
-setInterval(routeModule.updateRoutes, routeUpdateInterval);
+routeService.updateRoutes();
+setInterval(routeService.updateRoutes, routeUpdateInterval);
 
 module.exports = app;

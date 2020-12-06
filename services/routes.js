@@ -8,9 +8,7 @@ let routes = {};
 function queryDigitransitAPI(query, callback) {
   request.post({
     url: DIGITRANSIT_API_URL,
-    headers: {
-      'Content-Type': 'application/graphql'
-    },
+    headers: { 'Content-Type': 'application/graphql' },
     body: query
   }, (err, response, body) => {
     if(err) return callback(err, body);
@@ -71,8 +69,6 @@ function saveRoutesToDisk() {
     routes
   };
 
-  console.log('Saving ', dataToSave);
-
   fs.writeFile('./routes.json', JSON.stringify(dataToSave), 'utf8', err => {
     if(err) throw err;
 
@@ -91,8 +87,8 @@ function createRoutes() {
         routes[route.gtfsId] = routeData;
 
         console.log(Object.keys(routes).length + ' / ' + routeList.length);
-        console.log(routeData);
-        console.log();
+        //console.log(routeData);
+        //console.log();
 
         if(Object.keys(routes).length === routeList.length) {
           // All routes complete
@@ -124,7 +120,6 @@ module.exports.updateRoutes = () => {
       if(timeElapsed < 12 * 60 * 60 * 1000) {
         console.log('Using cached route data');
 
-        console.log(data);
         routes = data.routes;
       } else {
         console.log('Cached route data too old, updating via Digitransit API');
