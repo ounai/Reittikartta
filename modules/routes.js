@@ -64,10 +64,14 @@ function getRouteData(gtfsId, callback) {
 }
 
 function saveRoutesToDisk() {
+  const timestamp = new Date().getTime();
+
   const dataToSave = {
-    timestamp: (new Date()).getTime(),
-    routes: JSON.stringify(routes)
+    timestamp,
+    routes
   };
+
+  console.log('Saving ', dataToSave);
 
   fs.writeFile('./routes.json', JSON.stringify(dataToSave), 'utf8', err => {
     if(err) throw err;
@@ -76,10 +80,34 @@ function saveRoutesToDisk() {
   });
 }
 
+function createRoutes() {
+  getRouteList((err, routeList) => {
+    if(err) throw err;
+    
+    routeList.forEach(route => {
+      getRouteData(route.gtfsId, (err, routeData) => {
+        if(err) throw err;
+
+        routes[route.gtfsId] = routeData;
+
+        console.log(Object.keys(routes).length + ' / ' + routeList.length);
+        console.log(routeData);
+        console.log();
+
+        if(Object.keys(routes).length === routeList.length) {
+          // All routes complete
+          console.log('Saving routes to disk');
+          saveRoutesToDisk();
+        }
+      });
+    });
+  });
+}
+
 module.exports.updateRoutes = () => {
   console.log('Updating routes...');
 
-  routes = [];
+  routes = {};
 
   if(fs.existsSync('./routes.json')) {
     fs.readFile('./routes.json', 'utf8', (err, data) => {
@@ -91,40 +119,20 @@ module.exports.updateRoutes = () => {
               fileTimestamp = data.timestamp,
               timeElapsed = currentTimestamp - fileTimestamp;
 
-      console.log(fileTimestamp + ' vs ' + data.timestamp + ', difference ' + timeElapsed);
+      console.log(fileTimestamp + ' vs ' + currentTimestamp + ', difference ' + timeElapsed);
 
       if(timeElapsed < 12 * 60 * 60 * 1000) {
         console.log('Using cached route data');
 
-        routes = JSON.parse(data.routes);
+        console.log(data);
+        routes = data.routes;
       } else {
         console.log('Cached route data too old, updating via Digitransit API');
+
+        createRoutes();
       }
     });
-  }
-
-  if(routes === []) {
-    getRouteList((err, routeList) => {
-      if(err) throw err;
-      
-      routeList.forEach(route => {
-        getRouteData(route.gtfsId, (err, routeData) => {
-          if(err) throw err;
-
-          routes[route.gtfsId] = routeData;
-
-          console.log(Object.keys(routes).length + ' / ' + routeList.length);
-          console.log(routeData);
-          console.log();
-
-          if(Object.keys(routes).length === routeList.length) {
-            // All routes complete
-            saveRoutesToDisk();
-          }
-        });
-      });
-    });
-  }
+  } else createRoutes();
 };
 
 module.exports.getRoutes = () => {

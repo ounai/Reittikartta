@@ -7,6 +7,7 @@ const routeModule = require('../modules/routes');
 router.get('/getRoutes', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(routeModule.getRoutes()));
+  console.log(routeModule.getRoutes());
 });
 
 module.exports = router;
