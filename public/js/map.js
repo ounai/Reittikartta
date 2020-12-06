@@ -22,7 +22,7 @@ function initLeaflet() {
   let osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   let osmAttribution = 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
   let osmLayer = new L.TileLayer(osmUrl, {
-    maxZoom: 20,
+    maxZoom: 19,
     attribution: osmAttribution
   });
 
